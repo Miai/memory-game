@@ -7,22 +7,23 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
  * Create an arry with the designs to show on the cards
  * the desired number of pairs that the user wanted 
  */
-const desiredNoOfPairs = 100; /* Get dynamically the number of pairs that the players wants */
-const designArray = [];
-let array = [];
+
+let desiredNoOfPairs = 0; /* Get dynamically the number of pairs that the players wants */
+let designArray = [];
 
 function cardDesignArray (noOfPairs) {
+    designArray = [];
     for (let i = 1; i <= noOfPairs; i++) {
-        designArray.push(icons[i]);
+        designArray.push(shuffle(icons)[i]);
     }
-    array = designArray.concat(designArray);
+    designArray = designArray.concat(designArray);
 }
 
-cardDesignArray(desiredNoOfPairs); /**First */
-
-const shuffledArray = shuffle(array);
-
 function createGameBoard (desiredNoOfPairs) {
+
+        cardDesignArray(desiredNoOfPairs); 
+
+        let shuffledArray = shuffle(designArray);
         const boardDeck = document.getElementById('board-deck');
         //Clear the deck before adding cards
         while (boardDeck.firstChild) {
@@ -31,7 +32,7 @@ function createGameBoard (desiredNoOfPairs) {
         //Adding rows and creating the table overall
         for(let i=0; i < (desiredNoOfPairs*2); i++) {
             const listItem = document.createElement('li');
-            let itemContent = '<i class="fas far fab fa-' + shuffledArray[i] + '"></i>';
+            let itemContent = '<i class="fas fab fa-' + shuffledArray[i] + '"></i>';
             console.log(itemContent);
             listItem.innerHTML = itemContent;
             listItem.setAttribute('class', 'card open');
