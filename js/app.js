@@ -12,6 +12,7 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
 const boardDeck = document.getElementById('board-deck');
 const movesCounter = document.querySelector('.moves');
 const resetBtn = document.querySelector('.restart');
+const allStars = document.querySelectorAll('.stars li');
 /* Board generation and stats */
 let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
@@ -25,33 +26,10 @@ const secondsSelector = document.querySelector('.seconds');
 let hours = 0;
 let minutes = 0;
 let seconds = 0;
+let totalSeconds = 0;
 
 let stopTimer; //function used to stop the timer;
 let myTimer; //function that initializez the timer;
-
-function timer() {
-    seconds = seconds + 1;
-    if(seconds === 60) {
-        seconds = 0;
-        minutes = minutes + 1;
-        if(minutes === 60) {
-            minutes = 0;
-            hours = hours + 1;       
-        }
-    }
-
-    displayTimer(hours, minutes, seconds);
-}
-
-function displayTimer(h, m, s) {
-    let formatedH = ("0" + h).slice(-2);
-    let formatedM = ("0" + m).slice(-2);
-    let formatedS = ("0" + s).slice(-2);
-
-    hoursSelector.textContent = formatedH;
-    minutesSelector.textContent =formatedM;
-    secondsSelector.textContent =formatedS;
-}
 
 function cardDesignArray(noOfPairs) {
     designArray = [];
@@ -82,6 +60,41 @@ function createGameBoard(desiredNoOfPairs) {
     console.log('The board was created in: ' + (endingTime - startingTime) + ' milliseconds.');
 }
 
+/**
+ * Timer Setup
+ */
+function timer() {
+    /* TODO
+     * refactor this so that you have a full seconds counter
+     * determine all the other variables with math formulas
+     */
+    totalSeconds = totalSeconds + 1;
+    seconds = seconds + 1;
+    if(seconds === 60) {
+        seconds = 0;
+        minutes = minutes + 1;
+        if(minutes === 60) {
+            minutes = 0;
+            hours = hours + 1;       
+        }
+    }
+
+    displayTimer(hours, minutes, seconds);
+}
+
+function displayTimer(h, m, s) {
+    let formatedH = ("0" + h).slice(-2);
+    let formatedM = ("0" + m).slice(-2);
+    let formatedS = ("0" + s).slice(-2);
+
+    hoursSelector.textContent = formatedH;
+    minutesSelector.textContent =formatedM;
+    secondsSelector.textContent =formatedS;
+}
+
+/**
+ * Game clicking actions
+ */
 boardDeck.addEventListener('click', function clickedCard(event) {
     const startingTime = performance.now();
     if(event.target.classList.contains('show')){
@@ -95,8 +108,10 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         event.target.setAttribute('class', 'card open show');
         openedArray.push(event.target.firstChild.getAttribute('data-icon'));
         moves = moves + 1;
+        updateMoves(moves);
         myTimer();
         event.target.firstChild.setAttribute('data-move', moves);
+        starRating(moves);
         checkSimilarity();
         const endingTime = performance.now();
         console.log('Clicked tasks were performed in: ' + (endingTime - startingTime) + ' milliseconds.');
@@ -108,6 +123,10 @@ function updateMoves (moves) {
     movesCounter.innerHTML = moves;
 }
 
+
+/**
+ * Check if the 2 clicked cards match and if so keep them "face up"
+ */
 function checkSimilarity() {
     if(openedArray.length === 2) {
         if (openedArray[0] === openedArray[1]) {
@@ -123,15 +142,36 @@ function checkSimilarity() {
     }
 }
 
+/**
+ * Turn cards back upside down if they don't match
+ */
 function turnCards() {
     document.querySelector('[data-move="' + (moves-1) + '"]').parentNode.setAttribute('class', 'card');
     document.querySelector('[data-move="' + moves + '"]').parentNode.setAttribute('class', 'card');
 }
 
+/**
+ * Determine if the game has ended
+ */
 function gameEnded() {
     if(designArray.length === pairsArray.length) {
         clearInterval(stopTimer);
         console.log('Game Ended');
+    }
+}
+
+
+/**
+ * Determine the number of stars based on moves.
+ * TODO: Maybe make so that it takes into account the time as well
+ */
+function starRating(noOfMoves) {
+    if (noOfMoves > (desiredNoOfPairs * 3) && noOfMoves <= (desiredNoOfPairs * 4)) {
+        allStars[0].innerHTML = '<li><i class="far fa-star"></i></li>';
+    } else if (noOfMoves > (desiredNoOfPairs * 4) && noOfMoves <= (desiredNoOfPairs * 5)) {
+        allStars[1].innerHTML = '<li><i class="far fa-star"></i></li>';
+    } else if(noOfMoves > (desiredNoOfPairs * 5)) {
+        allStars[2].innerHTML = '<li><i class="far fa-star"></i></li>';
     }
 }
 
@@ -167,6 +207,9 @@ function once(fn, context) {
 	};
 }
 
+/**
+ * Initialization function that sets/resets everything
+ */
 function init() {
     moves = 0;
     designArray = [];
@@ -175,8 +218,10 @@ function init() {
     hours = 0;
     minutes = 0;
     seconds = 0;
+    totalSeconds = 0;
 
     displayTimer(hours, minutes, seconds);
+    clearInterval(stopTimer);
 
     myTimer = once(function() {
         stopTimer = window.setInterval(function (){
