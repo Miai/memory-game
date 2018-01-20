@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 /*
  * Create a list that holds all of your cards
  */
@@ -19,7 +20,7 @@ const modalContainer = document.getElementById('modal-container');
 const modalScore = modalContainer.querySelector('.restart');
 let modalStars;
 /* Board generation and stats */
-let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
+let desiredNoOfPairs = 8; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
 let openedArray = [];
 let pairsArray = [];
@@ -45,7 +46,6 @@ function cardDesignArray(noOfPairs) {
 }
 
 function createGameBoard(desiredNoOfPairs) {
-    const startingTime = performance.now();
     cardDesignArray(desiredNoOfPairs); 
 
     let shuffledArray = shuffle(designArray);
@@ -61,8 +61,6 @@ function createGameBoard(desiredNoOfPairs) {
         listItem.setAttribute('class', 'card');
         boardDeck.appendChild(listItem);
     }
-    const endingTime = performance.now();
-    console.log('The board was created in: ' + (endingTime - startingTime) + ' milliseconds.');
 }
 
 /**
@@ -103,14 +101,12 @@ function displayTimer(h, m, s) {
  * Game clicking actions
  */
 boardDeck.addEventListener('click', function clickedCard(event) {
-    const startingTime = performance.now();
     if(event.target.classList.contains('show')){
         return;
     } else if(event.target.nodeName === 'LI') {
         if(openedArray.length >= 2) {
             turnCards();
             openedArray=[];
-            const endingTime = performance.now();
         }
         event.target.setAttribute('class', 'card open show');
         openedArray.push(event.target.firstChild.getAttribute('data-icon'));
@@ -120,8 +116,6 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         event.target.firstChild.setAttribute('data-move', moves);
         starRating(moves);
         checkSimilarity();
-        const endingTime = performance.now();
-        console.log('Clicked tasks were performed in: ' + (endingTime - startingTime) + ' milliseconds.');
         gameEnded();
     }
 });
@@ -166,7 +160,6 @@ function gameEnded() {
     if(designArray.length === pairsArray.length) {
         clearInterval(stopTimer);
         modalView();
-        console.log('Game Ended');
     }
 }
 
@@ -226,7 +219,6 @@ function once(fn, context) {
 	return function() { 
 		if(fn) {
             result = fn.apply(context || this, arguments);
-            console.log(fn);
 			fn = null;
         }
         return result;
