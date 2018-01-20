@@ -8,13 +8,13 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
  * the desired number of pairs that the user wanted 
  */
 const boardDeck = document.getElementById('board-deck');
-const movesCounter = document.querySelector('.moves'); 
-let desiredNoOfPairs = 0; /* Get dynamically the number of pairs that the players wants */
+const movesCounter = document.querySelector('.moves');
+const resetBtn = document.querySelector('.restart');
+let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
 let openedArray = [];
-//let pairsArray = [];
+let pairsArray = [];
 let moves = 0;
-
 
 function cardDesignArray(noOfPairs) {
     designArray = [];
@@ -41,8 +41,6 @@ function createGameBoard(desiredNoOfPairs) {
         listItem.setAttribute('class', 'card');
         boardDeck.appendChild(listItem);
     }
-
-
 }
 
 boardDeck.addEventListener('click', function clickedCard(event) {
@@ -56,16 +54,25 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         event.target.setAttribute('class', 'card open show');
         openedArray.push(event.target.firstChild.getAttribute('data-icon'));
         moves = moves + 1;
-        movesCounter.innerHTML = moves;
+        updateMoves(moves);
         event.target.firstChild.setAttribute('data-move', moves)
         checkSimilarity();
+        gameEnded();
     }
 });
+
+resetBtn.addEventListener('click', function resetGame(event) {
+    init();
+});
+
+function updateMoves (moves) {
+    movesCounter.innerHTML = moves;
+}
 
 function checkSimilarity() {
     if(openedArray.length === 2) {
         if (openedArray[0] === openedArray[1]) {
-        //pairsArray = pairsArray.concat(openedArray);
+        pairsArray = pairsArray.concat(openedArray);
         openedArray = [];
         return true;
         } else {
@@ -80,8 +87,11 @@ function turnCards() {
     document.querySelector('[data-move="' + moves + '"]').parentNode.setAttribute('class', 'card');
 }
 
-
-
+function gameEnded() {
+    if(designArray.length === pairsArray.length) {
+        console.log('Game Ended');
+    }
+}
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -98,7 +108,18 @@ function shuffle(array) {
     return array;
 }
 
-createGameBoard(8);
+function init() {
+    desiredNoOfPairs = 2;
+    moves = 0;
+    designArray = [];
+    openedArray = [];
+    pairsArray = [];
+
+    updateMoves(moves);
+    createGameBoard(desiredNoOfPairs);
+}
+
+init();
 
 /*
  * set up the event listener for a card. If a card is clicked:
