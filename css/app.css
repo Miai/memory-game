@@ -29,6 +29,16 @@ html.modal-active, body.modal-active {
   transform: scale(0);
   z-index: 1;
 }
+#modal-container .score-panel {
+  text-align: center;
+}
+#modal-container .restart {
+  float: none;
+  padding: 5px 15px;
+  margin-top: 10px;
+  background: #2e8b57;
+  color: #fff;
+}
 #modal-container.zoomish {
   transform: scale(1);
 }
@@ -50,7 +60,7 @@ html.modal-active, body.modal-active {
   background: rgba(0, 0, 0, 0.8);
 }
 #modal-container .modal-background .modal {
-  background: white;
+  background: linear-gradient(160deg, #2196F3 0%, #FFEB3B 50%, #8BC34A 100%);
   padding: 50px;
   display: block;
   width: 460px;
@@ -59,6 +69,7 @@ html.modal-active, body.modal-active {
   margin: 0 auto;
   top: 30%;
   text-align: center;
+  border-radius: 10px;
 }
 #modal-container .modal-background .modal h2 {
   font-size: 25px;
@@ -69,6 +80,7 @@ html.modal-active, body.modal-active {
   font-size: 18px;
   line-height: 22px;
 }
+
 /* END */
 .container {
   display: flex;

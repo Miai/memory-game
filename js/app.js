@@ -17,6 +17,7 @@ const allStars = document.querySelector('.stars');
 const bodyEl = document.body;
 const modalContainer = document.getElementById('modal-container');
 const modalScore = modalContainer.querySelector('.restart');
+let modalStars;
 /* Board generation and stats */
 let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
@@ -169,10 +170,15 @@ function gameEnded() {
     }
 }
 
+/**
+ * Adding the modal
+ */
 function modalView() {
-    modalScore.parentNode.insertBefore(allStars, modalScore);
+    const cloneAllStars = allStars.cloneNode(true);
+    modalStars = modalScore.parentNode.insertBefore(cloneAllStars, modalScore);
     bodyEl.setAttribute('class', 'modal-active');
     modalContainer.setAttribute('class', 'zoomish');
+    return modalStars;
 }
 
 
@@ -181,13 +187,18 @@ function modalView() {
  * TODO: Maybe make so that it takes into account the time as well
  */
 function starRating(noOfMoves) {
-    if (noOfMoves > (desiredNoOfPairs * 3) && noOfMoves <= (desiredNoOfPairs * 4)) {
-        allStarsItems[0].innerHTML = '<li><i class="far fa-star"></i></li>';
-    } else if (noOfMoves > (desiredNoOfPairs * 4) && noOfMoves <= (desiredNoOfPairs * 5)) {
-        allStarsItems[1].innerHTML = '<li><i class="far fa-star"></i></li>';
-    } else if(noOfMoves > (desiredNoOfPairs * 5)) {
-        allStarsItems[2].innerHTML = '<li><i class="far fa-star"></i></li>';
-    }
+    if(noOfMoves === 0) {
+        allStarsItems[0].innerHTML = '<li><i class="fa fa-star"></i></li>';
+        allStarsItems[1].innerHTML = '<li><i class="fa fa-star"></i></li>';
+        allStarsItems[2].innerHTML = '<li><i class="fa fa-star"></i></li>';
+        return;
+    } else if (noOfMoves > (desiredNoOfPairs * 3) && noOfMoves <= (desiredNoOfPairs * 4)) {
+                allStarsItems[0].innerHTML = '<li><i class="far fa-star"></i></li>';
+            } else if (noOfMoves > (desiredNoOfPairs * 4) && noOfMoves <= (desiredNoOfPairs * 5)) {
+                        allStarsItems[1].innerHTML = '<li><i class="far fa-star"></i></li>';
+                    } else if(noOfMoves > (desiredNoOfPairs * 5)) {
+                                allStarsItems[2].innerHTML = '<li><i class="far fa-star"></i></li>';
+                            }
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -256,13 +267,11 @@ function buttonsReset() {
                 init();
                 modalContainer.setAttribute('class', 'out');
                 bodyEl.removeAttribute('class');
+                starRating(0);
+                modalStars.remove();
                 event.preventDefault();
         });
     }
 }
-
-// resetBtn.addEventListener('click', function resetGame(event) {
-//     init();
-// });
 
 init();
