@@ -10,9 +10,13 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
 
 /* Board generation variables */
 const boardDeck = document.getElementById('board-deck');
-const movesCounter = document.querySelector('.moves');
-const resetBtn = document.querySelector('.restart');
-const allStars = document.querySelectorAll('.stars li');
+const movesCounter = document.querySelectorAll('.moves');
+const resetBtn = document.querySelectorAll('.restart');
+const allStarsItems = document.querySelectorAll('.stars li');
+const allStars = document.querySelector('.stars');
+const bodyEl = document.body;
+const modalContainer = document.getElementById('modal-container');
+const modalScore = modalContainer.querySelector('.restart');
 /* Board generation and stats */
 let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
@@ -20,9 +24,9 @@ let openedArray = [];
 let pairsArray = [];
 let moves = 0;
 /* Timer variables */
-const hoursSelector = document.querySelector('.hours');
-const minutesSelector = document.querySelector('.minutes');
-const secondsSelector = document.querySelector('.seconds');
+const hoursSelector = document.querySelectorAll('.hours');
+const minutesSelector = document.querySelectorAll('.minutes');
+const secondsSelector = document.querySelectorAll('.seconds');
 let hours = 0;
 let minutes = 0;
 let seconds = 0;
@@ -86,10 +90,12 @@ function displayTimer(h, m, s) {
     let formatedH = ("0" + h).slice(-2);
     let formatedM = ("0" + m).slice(-2);
     let formatedS = ("0" + s).slice(-2);
-
-    hoursSelector.textContent = formatedH;
-    minutesSelector.textContent =formatedM;
-    secondsSelector.textContent =formatedS;
+    
+    for (var i = 0; i < secondsSelector.length; i++) {
+        hoursSelector[i].textContent = formatedH;
+        minutesSelector[i].textContent =formatedM;
+        secondsSelector[i].textContent =formatedS;
+    }
 }
 
 /**
@@ -120,7 +126,9 @@ boardDeck.addEventListener('click', function clickedCard(event) {
 });
 
 function updateMoves (moves) {
-    movesCounter.innerHTML = moves;
+    for (var i = 0; i < movesCounter.length; i++) {
+        movesCounter[i].innerHTML = moves;
+        }
 }
 
 
@@ -156,8 +164,15 @@ function turnCards() {
 function gameEnded() {
     if(designArray.length === pairsArray.length) {
         clearInterval(stopTimer);
+        modalView();
         console.log('Game Ended');
     }
+}
+
+function modalView() {
+    modalScore.parentNode.insertBefore(allStars, modalScore);
+    bodyEl.setAttribute('class', 'modal-active');
+    modalContainer.setAttribute('class', 'zoomish');
 }
 
 
@@ -167,11 +182,11 @@ function gameEnded() {
  */
 function starRating(noOfMoves) {
     if (noOfMoves > (desiredNoOfPairs * 3) && noOfMoves <= (desiredNoOfPairs * 4)) {
-        allStars[0].innerHTML = '<li><i class="far fa-star"></i></li>';
+        allStarsItems[0].innerHTML = '<li><i class="far fa-star"></i></li>';
     } else if (noOfMoves > (desiredNoOfPairs * 4) && noOfMoves <= (desiredNoOfPairs * 5)) {
-        allStars[1].innerHTML = '<li><i class="far fa-star"></i></li>';
+        allStarsItems[1].innerHTML = '<li><i class="far fa-star"></i></li>';
     } else if(noOfMoves > (desiredNoOfPairs * 5)) {
-        allStars[2].innerHTML = '<li><i class="far fa-star"></i></li>';
+        allStarsItems[2].innerHTML = '<li><i class="far fa-star"></i></li>';
     }
 }
 
@@ -231,10 +246,23 @@ function init() {
 
     updateMoves(moves);
     createGameBoard(desiredNoOfPairs);
+    
+    buttonsReset();
 }
 
-resetBtn.addEventListener('click', function resetGame(event) {
-    init();
-});
+function buttonsReset() {
+    for (var i = 0; i < resetBtn.length; i++) {
+        resetBtn[i].addEventListener('click', function resetGame(event) {
+                init();
+                modalContainer.setAttribute('class', 'out');
+                bodyEl.removeAttribute('class');
+                event.preventDefault();
+        });
+    }
+}
+
+// resetBtn.addEventListener('click', function resetGame(event) {
+//     init();
+// });
 
 init();
