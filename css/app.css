@@ -65,7 +65,7 @@ h1 {
     box-shadow: 5px 2px 20px 0 rgba(46, 61, 73, 0.98);
     overflow: hidden;
     /* Animation */
-    transition: all 1000ms cubic-bezier(0.19, 1, 0.22, 1);
+    transition: all 1000ms cubic-bezier(0.19, 1, 0.22, 1), font-size 0s;
 }
 
 .deck .card:hover {
@@ -81,6 +81,10 @@ h1 {
 
 .deck .card.show {
     font-size: 33px;
+}
+
+.deck .show.keep {
+    background: #3ab93a;
 }
 
 .deck .card.match {

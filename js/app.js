@@ -10,7 +10,7 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
 const boardDeck = document.getElementById('board-deck');
 const movesCounter = document.querySelector('.moves');
 const resetBtn = document.querySelector('.restart');
-let desiredNoOfPairs = 4; /* Get dynamically the number of pairs that the players wants */
+let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
 let openedArray = [];
 let pairsArray = [];
@@ -25,7 +25,7 @@ function cardDesignArray(noOfPairs) {
 }
 
 function createGameBoard(desiredNoOfPairs) {
-
+    const startingTime = performance.now();
     cardDesignArray(desiredNoOfPairs); 
 
     let shuffledArray = shuffle(designArray);
@@ -41,15 +41,19 @@ function createGameBoard(desiredNoOfPairs) {
         listItem.setAttribute('class', 'card');
         boardDeck.appendChild(listItem);
     }
+    const endingTime = performance.now();
+    console.log('The board was created in: ' + (endingTime - startingTime) + ' milliseconds.');
 }
 
 boardDeck.addEventListener('click', function clickedCard(event) {
+    const startingTime = performance.now();
     if(event.target.classList.contains('show')){
         return;
     } else if(event.target.nodeName === 'LI') {
         if(openedArray.length >= 2) {
             turnCards();
             openedArray=[];
+            const endingTime = performance.now();
         }
         event.target.setAttribute('class', 'card open show');
         openedArray.push(event.target.firstChild.getAttribute('data-icon'));
@@ -57,6 +61,8 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         updateMoves(moves);
         event.target.firstChild.setAttribute('data-move', moves)
         checkSimilarity();
+        const endingTime = performance.now();
+        console.log('Clicked tasks were performed in: ' + (endingTime - startingTime) + ' milliseconds.');
         gameEnded();
     }
 });
@@ -69,6 +75,8 @@ function checkSimilarity() {
     if(openedArray.length === 2) {
         if (openedArray[0] === openedArray[1]) {
         pairsArray = pairsArray.concat(openedArray);
+        document.querySelector('[data-move="' + (moves-1) + '"]').parentNode.setAttribute('class', 'card open show keep');
+        document.querySelector('[data-move="' + moves + '"]').parentNode.setAttribute('class', 'card open show keep');
         openedArray = [];
         return true;
         } else {
