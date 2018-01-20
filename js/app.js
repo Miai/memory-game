@@ -7,11 +7,16 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
  * Create an arry with the designs to show on the cards
  * the desired number of pairs that the user wanted 
  */
-
+const boardDeck = document.getElementById('board-deck');
+const movesCounter = document.querySelector('.moves'); 
 let desiredNoOfPairs = 0; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
+let openedArray = [];
+//let pairsArray = [];
+let moves = 0;
 
-function cardDesignArray (noOfPairs) {
+
+function cardDesignArray(noOfPairs) {
     designArray = [];
     for (let i = 1; i <= noOfPairs; i++) {
         designArray.push(shuffle(icons)[i]);
@@ -19,26 +24,64 @@ function cardDesignArray (noOfPairs) {
     designArray = designArray.concat(designArray);
 }
 
-function createGameBoard (desiredNoOfPairs) {
+function createGameBoard(desiredNoOfPairs) {
 
-        cardDesignArray(desiredNoOfPairs); 
+    cardDesignArray(desiredNoOfPairs); 
 
-        let shuffledArray = shuffle(designArray);
-        const boardDeck = document.getElementById('board-deck');
-        //Clear the deck before adding cards
-        while (boardDeck.firstChild) {
-            boardDeck.removeChild(boardDeck.firstChild);
-        }
-        //Adding rows and creating the table overall
-        for(let i=0; i < (desiredNoOfPairs*2); i++) {
-            const listItem = document.createElement('li');
-            let itemContent = '<i class="fas fab fa-' + shuffledArray[i] + '"></i>';
-            console.log(itemContent);
-            listItem.innerHTML = itemContent;
-            listItem.setAttribute('class', 'card open');
-            boardDeck.appendChild(listItem);
-        }
+    let shuffledArray = shuffle(designArray);
+    //Clear the deck before adding cards
+    while (boardDeck.firstChild) {
+        boardDeck.removeChild(boardDeck.firstChild);
+    }
+    //Adding rows and creating the table overall
+    for(let i=0; i < (desiredNoOfPairs*2); i++) {
+        const listItem = document.createElement('li');
+        let itemContent = '<i class="fas fab fa-' + shuffledArray[i] + '"></i>';
+        listItem.innerHTML = itemContent;
+        listItem.setAttribute('class', 'card');
+        boardDeck.appendChild(listItem);
+    }
+
+
 }
+
+boardDeck.addEventListener('click', function clickedCard(event) {
+    if(event.target.classList.contains('show')){
+        return;
+    } else if(event.target.nodeName === 'LI') {
+        if(openedArray.length >= 2) {
+            turnCards();
+            openedArray=[];
+        }
+        event.target.setAttribute('class', 'card open show');
+        openedArray.push(event.target.firstChild.getAttribute('data-icon'));
+        moves = moves + 1;
+        movesCounter.innerHTML = moves;
+        event.target.firstChild.setAttribute('data-move', moves)
+        checkSimilarity();
+    }
+});
+
+function checkSimilarity() {
+    if(openedArray.length === 2) {
+        if (openedArray[0] === openedArray[1]) {
+        //pairsArray = pairsArray.concat(openedArray);
+        openedArray = [];
+        return true;
+        } else {
+            //openedArray = [];
+            return false;
+        }
+    }
+}
+
+function turnCards() {
+    document.querySelector('[data-move="' + (moves-1) + '"]').parentNode.setAttribute('class', 'card');
+    document.querySelector('[data-move="' + moves + '"]').parentNode.setAttribute('class', 'card');
+}
+
+
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -55,6 +98,7 @@ function shuffle(array) {
     return array;
 }
 
+createGameBoard(8);
 
 /*
  * set up the event listener for a card. If a card is clicked:
