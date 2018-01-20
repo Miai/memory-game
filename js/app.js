@@ -7,14 +7,51 @@ const icons = ["500px","accessible-icon","accusoft","adn","adversal","affiliatet
  * Create an arry with the designs to show on the cards
  * the desired number of pairs that the user wanted 
  */
+
+/* Board generation variables */
 const boardDeck = document.getElementById('board-deck');
 const movesCounter = document.querySelector('.moves');
 const resetBtn = document.querySelector('.restart');
+/* Board generation and stats */
 let desiredNoOfPairs = 2; /* Get dynamically the number of pairs that the players wants */
 let designArray = [];
 let openedArray = [];
 let pairsArray = [];
 let moves = 0;
+/* Timer variables */
+const hoursSelector = document.querySelector('.hours');
+const minutesSelector = document.querySelector('.minutes');
+const secondsSelector = document.querySelector('.seconds');
+let hours = 0;
+let minutes = 0;
+let seconds = 0;
+
+let stopTimer; //function used to stop the timer;
+let myTimer; //function that initializez the timer;
+
+function timer() {
+    seconds = seconds + 1;
+    if(seconds === 60) {
+        seconds = 0;
+        minutes = minutes + 1;
+        if(minutes === 60) {
+            minutes = 0;
+            hours = hours + 1;       
+        }
+    }
+
+    displayTimer(hours, minutes, seconds);
+}
+
+function displayTimer(h, m, s) {
+    let formatedH = ("0" + h).slice(-2);
+    let formatedM = ("0" + m).slice(-2);
+    let formatedS = ("0" + s).slice(-2);
+
+    hoursSelector.textContent = formatedH;
+    minutesSelector.textContent =formatedM;
+    secondsSelector.textContent =formatedS;
+}
 
 function cardDesignArray(noOfPairs) {
     designArray = [];
@@ -58,8 +95,8 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         event.target.setAttribute('class', 'card open show');
         openedArray.push(event.target.firstChild.getAttribute('data-icon'));
         moves = moves + 1;
-        updateMoves(moves);
-        event.target.firstChild.setAttribute('data-move', moves)
+        myTimer();
+        event.target.firstChild.setAttribute('data-move', moves);
         checkSimilarity();
         const endingTime = performance.now();
         console.log('Clicked tasks were performed in: ' + (endingTime - startingTime) + ' milliseconds.');
@@ -93,6 +130,7 @@ function turnCards() {
 
 function gameEnded() {
     if(designArray.length === pairsArray.length) {
+        clearInterval(stopTimer);
         console.log('Game Ended');
     }
 }
@@ -112,18 +150,46 @@ function shuffle(array) {
     return array;
 }
 
-resetBtn.addEventListener('click', function resetGame(event) {
-    init();
-});
+/* 
+ *Helper function that allows me and makes sure 
+ *that a function is run only once
+ Take from - https://davidwalsh.name/javascript-once
+ */
+function once(fn, context) { 
+	var result;
+	return function() { 
+		if(fn) {
+            result = fn.apply(context || this, arguments);
+            console.log(fn);
+			fn = null;
+        }
+        return result;
+	};
+}
 
 function init() {
     moves = 0;
     designArray = [];
     openedArray = [];
     pairsArray = [];
+    hours = 0;
+    minutes = 0;
+    seconds = 0;
+
+    displayTimer(hours, minutes, seconds);
+
+    myTimer = once(function() {
+        stopTimer = window.setInterval(function (){
+            timer();
+          }, 1000);
+    });
 
     updateMoves(moves);
     createGameBoard(desiredNoOfPairs);
 }
+
+resetBtn.addEventListener('click', function resetGame(event) {
+    init();
+});
 
 init();
