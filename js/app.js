@@ -25,6 +25,7 @@ let designArray = [];
 let openedArray = [];
 let pairsArray = [];
 let moves = 0;
+let pairMoves = 0;
 /* Timer variables */
 const hoursSelector = document.querySelectorAll('.hours');
 const minutesSelector = document.querySelectorAll('.minutes');
@@ -114,16 +115,20 @@ boardDeck.addEventListener('click', function clickedCard(event) {
         updateMoves(moves);
         myTimer();
         event.target.firstChild.setAttribute('data-move', moves);
-        starRating(moves);
+        starRating(pairMoves);
         checkSimilarity();
         gameEnded();
     }
 });
 
 function updateMoves (moves) {
-    for (var i = 0; i < movesCounter.length; i++) {
-        movesCounter[i].innerHTML = moves;
-        }
+    pairMoves = Math.floor(moves/2);
+    if ((moves % 2) == 0) {
+        for (var i = 0; i < movesCounter.length; i++) {
+            console.log(pairMoves, moves);
+            movesCounter[i].innerHTML = pairMoves;
+            }
+    }
 }
 
 
@@ -185,16 +190,16 @@ function starRating(noOfMoves) {
         allStarsItems[1].innerHTML = '<li><i class="fa fa-star"></i></li>';
         allStarsItems[2].innerHTML = '<li><i class="fa fa-star"></i></li>';
         return;
-    } else if (noOfMoves > (desiredNoOfPairs * 3) && noOfMoves <= (desiredNoOfPairs * 4)) {
+    } else if (noOfMoves > (desiredNoOfPairs + desiredNoOfPairs / 2) && noOfMoves <= (desiredNoOfPairs * 2)) {
                 allStarsItems[0].innerHTML = '<li><i class="far fa-star"></i></li>';
-            } else if (noOfMoves > (desiredNoOfPairs * 4) && noOfMoves <= (desiredNoOfPairs * 5)) {
+            } else if (noOfMoves > (desiredNoOfPairs * 2) && noOfMoves <= (desiredNoOfPairs * 3)) {
                         allStarsItems[1].innerHTML = '<li><i class="far fa-star"></i></li>';
-                    } else if(noOfMoves > (desiredNoOfPairs * 5)) {
-                                allStarsItems[2].innerHTML = '<li><i class="far fa-star"></i></li>';
-                            }
+                    }
 }
 
-// Shuffle function from http://stackoverflow.com/a/2450976
+/**
+ * Shuffle function from http://stackoverflow.com/a/2450976
+ */
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -230,6 +235,7 @@ function once(fn, context) {
  */
 function init() {
     moves = 0;
+    pairMoves = 0;
     designArray = [];
     openedArray = [];
     pairsArray = [];
