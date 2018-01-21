@@ -125,7 +125,6 @@ function updateMoves (moves) {
     pairMoves = Math.floor(moves/2);
     if ((moves % 2) == 0) {
         for (var i = 0; i < movesCounter.length; i++) {
-            console.log(pairMoves, moves);
             movesCounter[i].innerHTML = pairMoves;
             }
     }

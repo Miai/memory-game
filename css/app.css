@@ -131,6 +131,9 @@ h1 {
   background: #02b3e4;
   cursor: default;
 }
+.deck .card.open svg {
+  transform: rotateY(180deg);
+}
 .deck .card.show {
   font-size: 33px;
 }
